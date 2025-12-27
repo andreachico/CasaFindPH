@@ -1,73 +1,125 @@
-# Welcome to your Lovable project
+# CasaFind PH 🏠
 
-## Project info
+A modern real estate marketplace platform for the Philippines, built with React and designed to help users find their dream homes with ease.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+![CasaFind PH](src/assets/casafind-logo.png)
 
-## How can I edit this code?
+## 🌟 Overview
 
-There are several ways of editing your application.
+CasaFind PH is a responsive, user-friendly real estate platform that connects property buyers, sellers, and renters across the Philippines. The platform features a clean, modern interface with intuitive navigation and powerful search capabilities to simplify the property hunting experience.
 
-**Use Lovable**
+## ✨ Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- **Property Search** - Advanced search functionality with location-based filtering
+- **Featured Properties** - Showcase of premium real estate listings with detailed information
+- **Popular Locations** - Explore properties in trending Philippine cities and neighborhoods
+- **Responsive Design** - Fully optimized for desktop, tablet, and mobile devices
+- **Modern UI/UX** - Clean interface with smooth animations and transitions
+- **SEO Optimized** - Built-in meta tags and semantic HTML for better search visibility
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠️ Tech Stack
 
-**Use your preferred IDE**
+- **Frontend Framework:** [React 18](https://react.dev/)
+- **Build Tool:** [Vite](https://vitejs.dev/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components:** [shadcn/ui](https://ui.shadcn.com/)
+- **Type Safety:** [TypeScript](https://www.typescriptlang.org/)
+- **Routing:** [React Router v6](https://reactrouter.com/)
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **Fonts:** [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 📁 Project Structure
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+src/
+├── assets/          # Images, logos, and static assets
+├── components/      # Reusable UI components
+│   ├── ui/          # shadcn/ui base components
+│   ├── Header.tsx   # Navigation header
+│   ├── Footer.tsx   # Site footer
+│   ├── SearchBar.tsx
+│   ├── PropertyCard.tsx
+│   ├── FeaturedProperties.tsx
+│   ├── PopularLocations.tsx
+│   ├── WhyChooseUs.tsx
+│   └── CTASection.tsx
+├── hooks/           # Custom React hooks
+├── lib/             # Utility functions
+├── pages/           # Page components
+│   ├── Index.tsx    # Home page
+│   └── NotFound.tsx # 404 page
+├── App.tsx          # Main app component
+├── main.tsx         # Application entry point
+└── index.css        # Global styles and design tokens
 ```
 
-**Edit a file directly in GitHub**
+## 🚀 Getting Started
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Prerequisites
 
-**Use GitHub Codespaces**
+- Node.js 18+
+- npm or yarn
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Installation
 
-## What technologies are used for this project?
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd casafind-ph
+   ```
 
-This project is built with:
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+3. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-## How can I deploy this project?
+4. **Open your browser**
+   Navigate to `http://localhost:5173`
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+### Build for Production
 
-## Can I connect a custom domain to my Lovable project?
+```bash
+npm run build
+```
 
-Yes, you can!
+The build output will be in the `dist/` directory.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🎨 Design System
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+The project uses a custom design system with CSS variables for consistent theming:
+
+- **Primary Color:** Teal (`--primary`)
+- **Accent Color:** Coral (`--accent`)
+- **Typography:** Plus Jakarta Sans
+- **Border Radius:** Rounded corners for modern feel
+- **Shadows:** Subtle elevation for depth
+
+## 📱 Responsive Breakpoints
+
+- Mobile: < 640px
+- Tablet: 640px - 1024px
+- Desktop: > 1024px
+
+## 🔧 Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+| `npm run lint` | Run ESLint |
+
+## 📄 License
+
+This project is private and proprietary.
+
+---
+
+<p align="center">
+  Built with ❤️ for the Philippine real estate market
+</p>
