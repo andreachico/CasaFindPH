@@ -2,13 +2,11 @@
 
 A modern real estate marketplace platform for the Philippines, built with React and designed to help users find their dream homes with ease.
 
-![CasaFind PH](src/assets/casafind-logo.png)
-
-## 🌟 Overview
+## Overview
 
 CasaFind PH is a responsive, user-friendly real estate platform that connects property buyers, sellers, and renters across the Philippines. The platform features a clean, modern interface with intuitive navigation and powerful search capabilities to simplify the property hunting experience.
 
-## ✨ Features
+## Features
 
 - **Property Search** - Advanced search functionality with location-based filtering
 - **Featured Properties** - Showcase of premium real estate listings with detailed information
@@ -17,7 +15,7 @@ CasaFind PH is a responsive, user-friendly real estate platform that connects pr
 - **Modern UI/UX** - Clean interface with smooth animations and transitions
 - **SEO Optimized** - Built-in meta tags and semantic HTML for better search visibility
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend Framework:** [React 18](https://react.dev/)
 - **Build Tool:** [Vite](https://vitejs.dev/)
@@ -28,7 +26,7 @@ CasaFind PH is a responsive, user-friendly real estate platform that connects pr
 - **Icons:** [Lucide React](https://lucide.dev/)
 - **Fonts:** [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans)
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -53,7 +51,7 @@ src/
 └── index.css        # Global styles and design tokens
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -89,7 +87,7 @@ npm run build
 
 The build output will be in the `dist/` directory.
 
-## 🎨 Design System
+## Design System
 
 The project uses a custom design system with CSS variables for consistent theming:
 
@@ -99,13 +97,13 @@ The project uses a custom design system with CSS variables for consistent themin
 - **Border Radius:** Rounded corners for modern feel
 - **Shadows:** Subtle elevation for depth
 
-## 📱 Responsive Breakpoints
+## Responsive Breakpoints
 
 - Mobile: < 640px
 - Tablet: 640px - 1024px
 - Desktop: > 1024px
 
-## 🔧 Available Scripts
+## Available Scripts
 
 | Command | Description |
 |---------|-------------|
@@ -114,7 +112,7 @@ The project uses a custom design system with CSS variables for consistent themin
 | `npm run preview` | Preview production build |
 | `npm run lint` | Run ESLint |
 
-## 📄 License
+## License
 
 This project is private and proprietary.
 
