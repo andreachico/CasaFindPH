@@ -1,54 +1,73 @@
-# 🏡 CasaFind.ph
+# Welcome to your Lovable project
 
-**CasaFind.ph** is a modern real estate marketplace for the Philippines.  
-It connects property seekers, sellers, and agents on a simple and trustworthy platform — with powerful search, verified listings, and a mobile-first experience.  
+## Project info
 
-Built using **GraphQL + MySQL**, the platform is designed to be fast, flexible, and scalable for long-term growth.  
+**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
 
----
+## How can I edit this code?
 
-## ✨ Key Features
+There are several ways of editing your application.
 
-- 🔍 **For Buyers & Renters**: Easy search, verified listings, and direct contact with property owners and agents.  
-- 📢 **For Sellers & Agents**: Wider exposure, affordable listing options, and a modern, mobile-friendly platform.  
-- 🌍 **For OFWs**: A trusted place to explore and invest in Philippine properties from anywhere in the world.  
+**Use Lovable**
 
----
+Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
 
-## 🚀 Tech Stack
+Changes made via Lovable will be committed automatically to this repo.
 
-- **Database**: MySQL (structured property and user data)  
-- **Backend**: Node.js + Apollo Server (GraphQL API)  
-- **ORM**: Prisma (database access and schema management)  
-- **Frontend**: React / Next.js (with Apollo Client)  
-- **Hosting**: [to decide: e.g., Vercel, DigitalOcean, AWS]  
+**Use your preferred IDE**
 
----
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-## 📌 Roadmap
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-- [ ] MVP launch with property search + listing features  
-- [ ] User authentication (buyers, sellers, agents)  
-- [ ] Agent dashboard for managing listings  
-- [ ] Premium listings & subscription options  
-- [ ] Mobile app (future phase)  
+Follow these steps:
 
----
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
 
-## 🛠️ Example GraphQL Query
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
 
-```graphql
-query {
-  properties(location: "Makati", minPrice: 20000, maxPrice: 80000, propertyType: "condo") {
-    id
-    title
-    price
-    bedrooms
-    bathrooms
-    location
-    listedBy {
-      name
-      role
-    }
-  }
-}
+# Step 3: Install the necessary dependencies.
+npm i
+
+# Step 4: Start the development server with auto-reloading and an instant preview.
+npm run dev
+```
+
+**Edit a file directly in GitHub**
+
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
+
+**Use GitHub Codespaces**
+
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
+
+## What technologies are used for this project?
+
+This project is built with:
+
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
+
+## How can I deploy this project?
+
+Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+
+## Can I connect a custom domain to my Lovable project?
+
+Yes, you can!
+
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
