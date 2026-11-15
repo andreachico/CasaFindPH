@@ -1,123 +1,65 @@
-# CasaFind PH 🏠
+# CasaFind
 
-A modern real estate marketplace platform for the Philippines, built with React and designed to help users find their dream homes with ease.
+This is the public website for CasaFind. It shows properties for sale and rent and gives users a simple way to browse listings in the Philippines.
 
-## Overview
+## What it does
 
-CasaFind PH is a responsive, user-friendly real estate platform that connects property buyers, sellers, and renters across the Philippines. The platform features a clean, modern interface with intuitive navigation and powerful search capabilities to simplify the property hunting experience.
+- Displays featured properties on the home page
+- Shows property details and key listing information
+- Uses the same property data as the CMS
+- Lets users browse available homes and rentals
 
-## Features
+## Tech stack
 
-- **Property Search** - Advanced search functionality with location-based filtering
-- **Featured Properties** - Showcase of premium real estate listings with detailed information
-- **Popular Locations** - Explore properties in trending Philippine cities and neighborhoods
-- **Responsive Design** - Fully optimized for desktop, tablet, and mobile devices
-- **Modern UI/UX** - Clean interface with smooth animations and transitions
-- **SEO Optimized** - Built-in meta tags and semantic HTML for better search visibility
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- TanStack Query
 
-## Tech Stack
-
-- **Frontend Framework:** [React 18](https://react.dev/)
-- **Build Tool:** [Vite](https://vitejs.dev/)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-- **UI Components:** [shadcn/ui](https://ui.shadcn.com/)
-- **Type Safety:** [TypeScript](https://www.typescriptlang.org/)
-- **Routing:** [React Router v6](https://reactrouter.com/)
-- **Icons:** [Lucide React](https://lucide.dev/)
-- **Fonts:** [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans)
-
-## Project Structure
-
-```
-src/
-├── assets/          # Images, logos, and static assets
-├── components/      # Reusable UI components
-│   ├── ui/          # shadcn/ui base components
-│   ├── Header.tsx   # Navigation header
-│   ├── Footer.tsx   # Site footer
-│   ├── SearchBar.tsx
-│   ├── PropertyCard.tsx
-│   ├── FeaturedProperties.tsx
-│   ├── PopularLocations.tsx
-│   ├── WhyChooseUs.tsx
-│   └── CTASection.tsx
-├── hooks/           # Custom React hooks
-├── lib/             # Utility functions
-├── pages/           # Page components
-│   ├── Index.tsx    # Home page
-│   └── NotFound.tsx # 404 page
-├── App.tsx          # Main app component
-├── main.tsx         # Application entry point
-└── index.css        # Global styles and design tokens
-```
-
-## Getting Started
-
-### Prerequisites
+## Requirements
 
 - Node.js 18+
-- npm or yarn
+- npm
 
-### Installation
+## Local setup
 
-1. **Clone the repository**
+1. Open the project folder
    ```bash
-   git clone <repository-url>
-   cd casafind-ph
+   cd CasaFind/frontend
    ```
 
-2. **Install dependencies**
+2. Install dependencies
    ```bash
    npm install
    ```
 
-3. **Start the development server**
+3. Start the app
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**
-   Navigate to `http://localhost:5173`
+4. Open the app in the browser
+   ```text
+   http://localhost:5173
+   ```
 
-### Build for Production
+## Available scripts
 
 ```bash
+npm run dev
 npm run build
+npm run preview
+npm run lint
 ```
 
-The build output will be in the `dist/` directory.
+## Notes
 
-## Design System
-
-The project uses a custom design system with CSS variables for consistent theming:
-
-- **Primary Color:** Teal (`--primary`)
-- **Accent Color:** Coral (`--accent`)
-- **Typography:** Plus Jakarta Sans
-- **Border Radius:** Rounded corners for modern feel
-- **Shadows:** Subtle elevation for depth
-
-## Responsive Breakpoints
-
-- Mobile: < 640px
-- Tablet: 640px - 1024px
-- Desktop: > 1024px
-
-## Available Scripts
-
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
-| `npm run lint` | Run ESLint |
+- The frontend reads property data from the CasaFind backend.
+- The site is connected to the CMS-managed property records so listings stay in sync.
+- Images and listing details come from the shared backend and database.
 
 ## License
 
-This project is private and proprietary.
-
----
-
-<p align="center">
-  Built with ❤️ for the Philippine real estate market
-</p>
+This project is private.
