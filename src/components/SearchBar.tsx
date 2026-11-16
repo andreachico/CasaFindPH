@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, MapPin, Home, Building2, DollarSign } from "lucide-react";
+import { Search, MapPin, Home, Building2, Banknote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -89,7 +89,7 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
 
           {/* Price Range */}
           <div className="relative">
-            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
+            <Banknote className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
             <Select
               value={filters.priceRange}
               onValueChange={(value) => setFilters({ ...filters, priceRange: value })}
