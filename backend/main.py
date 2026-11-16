@@ -48,6 +48,26 @@ def ensure_user_verified_column():
             conn.execute(text("ALTER TABLE users ADD COLUMN verified BOOLEAN NOT NULL DEFAULT FALSE"))
 
 
+def ensure_user_auth_columns():
+    with engine.begin() as conn:
+        compatibility = {
+            "first_name": "VARCHAR(100)",
+            "last_name": "VARCHAR(100)",
+            "birthday": "DATE",
+            "address": "TEXT",
+            "contact_number": "VARCHAR(20)",
+            "role": "VARCHAR(30) DEFAULT 'SEEKER'",
+        }
+
+        for column_name, definition in compatibility.items():
+            exists = conn.execute(
+                text("SELECT 1 FROM information_schema.columns WHERE table_name = 'users' AND column_name = :column_name"),
+                {"column_name": column_name},
+            ).fetchone()
+            if not exists:
+                conn.execute(text(f"ALTER TABLE users ADD COLUMN {column_name} {definition}"))
+
+
 def ensure_property_image_url_column():
     with engine.begin() as conn:
         exists = conn.execute(
@@ -70,6 +90,7 @@ def ensure_property_detail_image_url_column():
 def on_startup():
     Base.metadata.create_all(bind=engine)
     ensure_user_verified_column()
+    ensure_user_auth_columns()
     ensure_property_image_url_column()
     ensure_property_detail_image_url_column()
 

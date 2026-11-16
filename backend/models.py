@@ -14,15 +14,15 @@ class UserRoleEnum(enum.Enum):
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
-    first_name = Column(String(100), nullable=False)
-    last_name = Column(String(100), nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    first_name = Column(String(100), nullable=True)
+    last_name = Column(String(100), nullable=True)
     birthday = Column(Date, nullable=True)
     address = Column(Text, nullable=True)
     contact_number = Column(String(20), nullable=True)
     email = Column(String(150), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
-    role = Column(Enum(UserRoleEnum), nullable=False)
+    role = Column(String(30), nullable=False, default="SEEKER")
     verified = Column(Boolean, nullable=False, default=False)
 
 # `listing_type` is stored as a plain varchar in the existing casafind_db
