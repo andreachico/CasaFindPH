@@ -37,7 +37,7 @@ JWT_SECRET = os.getenv("JWT_SECRET", "supersecretkey")
 # -----------------------------
 @strawberry.type
 class UserType:
-    id: int
+    id: str
     first_name: str
     last_name: str
     email: str
@@ -63,12 +63,13 @@ def _hash_password(password: str) -> str:
 
 
 def _to_user_type(u: User) -> "UserType":
+    role_value = u.role.value if isinstance(u.role, UserRoleEnum) else str(u.role or "SEEKER")
     return UserType(
-        id=u.id,
-        first_name=u.first_name,
-        last_name=u.last_name,
+        id=str(u.id),
+        first_name=u.first_name or "",
+        last_name=u.last_name or "",
         email=u.email,
-        role=u.role.value,
+        role=role_value,
         verified=bool(getattr(u, "verified", False)),
         contact_number=u.contact_number,
     )
@@ -171,7 +172,7 @@ class Mutation:
             last_name=lastName,
             email=email,
             password_hash=hashed_pw,
-            role=role_enum,
+            role=role_enum.value,
             contact_number=contactNumber,
             verified=not is_admin or _is_super_admin_email(email),
         )
@@ -179,13 +180,13 @@ class Mutation:
         db.commit()
         db.refresh(user)
 
-        if user.role == UserRoleEnum.ADMIN and not user.verified and not _is_super_admin_email(user.email):
+        if str(user.role or "").upper() == UserRoleEnum.ADMIN.value and not user.verified and not _is_super_admin_email(user.email):
             db.close()
             raise Exception("This admin account is pending verification.")
 
         # JWT
         token = jwt.encode(
-            {"user_id": user.id, "role": user.role.value},
+            {"user_id": str(user.id), "role": str(user.role or "SEEKER").upper()},
             JWT_SECRET,
             algorithm="HS256"
         )
@@ -201,12 +202,12 @@ class Mutation:
         if not user or not _bcrypt.checkpw(password_bytes, user.password_hash.encode("utf-8")):
             db.close()
             raise Exception("Invalid credentials.")
-        if user.role == UserRoleEnum.ADMIN and not user.verified and not _is_super_admin_email(user.email):
+        if str(user.role or "").upper() == UserRoleEnum.ADMIN.value and not user.verified and not _is_super_admin_email(user.email):
             db.close()
             raise Exception("This admin account is pending verification.")
 
         token = jwt.encode(
-            {"user_id": user.id, "role": user.role.value},
+            {"user_id": str(user.id), "role": str(user.role or "SEEKER").upper()},
             JWT_SECRET,
             algorithm="HS256"
         )
@@ -241,7 +242,7 @@ class Mutation:
                 last_name=lastName,
                 email=email,
                 password_hash=_hash_password(password),
-                role=role_enum,
+                role=role_enum.value,
                 contact_number=contactNumber,
                 verified=verified,
             )
@@ -279,16 +280,16 @@ class Mutation:
                 user.last_name = lastName
             if role is not None:
                 try:
-                    user.role = UserRoleEnum(role.upper())
+                    user.role = UserRoleEnum(role.upper()).value
                 except ValueError:
                     raise Exception("Role must be ADMIN, AGENT, OWNER or SEEKER.")
-                if user.role == UserRoleEnum.ADMIN and verified is None and not _is_super_admin_email(user.email):
+                if str(user.role or "").upper() == UserRoleEnum.ADMIN.value and verified is None and not _is_super_admin_email(user.email):
                     user.verified = False
             if contactNumber is not None:
                 user.contact_number = contactNumber
             if verified is not None:
                 user.verified = verified
-            elif user.role == UserRoleEnum.ADMIN and _is_super_admin_email(user.email):
+            elif str(user.role or "").upper() == UserRoleEnum.ADMIN.value and _is_super_admin_email(user.email):
                 user.verified = True
             if password:
                 _validate_password(password)
