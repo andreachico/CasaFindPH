@@ -61,11 +61,13 @@ const fallbackImages = [
 // public site keeps rendering while showing real CMS listing data.
 function mapCmsProperty(p: CmsProperty, index: number): Property {
   const area = p.property_size ?? p.lot_size ?? 0;
-  const imageUrl = p.image_url?.startsWith("http")
+  const cmsImageUrl = p.image_url?.startsWith("http")
     ? p.image_url
     : p.image_url
       ? `${API_URL}${p.image_url.startsWith("/") ? "" : "/"}${p.image_url}`
       : null;
+
+  const imageUrl = cmsImageUrl || fallbackImages[index % fallbackImages.length] || "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80";
 
   return {
     id: p.id,

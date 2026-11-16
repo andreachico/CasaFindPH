@@ -5,6 +5,7 @@ import { useState } from "react";
 import { AuthModal } from "@/components/AuthModal";
 import type { AuthSession } from "@/lib/auth";
 import logo from "@/assets/CasaFindPH-Icon.jpeg";
+import fallbackLogo from "@/assets/property-1.jpg";
 
 interface HeaderProps {
   session: AuthSession | null;
@@ -16,6 +17,7 @@ const Header = ({ session, onAuthenticated, onSignOut }: HeaderProps) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [logoSrc, setLogoSrc] = useState(logo);
 
   const navLinks = [
     { label: "Buy", href: "/properties?type=buy" },
@@ -31,8 +33,9 @@ const Header = ({ session, onAuthenticated, onSignOut }: HeaderProps) => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3" aria-label="CasaFindPH home">
             <img
-              src={logo}
+              src={logoSrc}
               alt="CasaFindPH logo"
+              onError={() => setLogoSrc(fallbackLogo)}
               className="h-12 w-auto md:h-14"
             />
             <span className="text-xl md:text-2xl font-black tracking-tight text-foreground">
