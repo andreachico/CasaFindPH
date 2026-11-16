@@ -6,23 +6,34 @@ import WhyChooseUs from "@/components/WhyChooseUs";
 import PopularLocations from "@/components/PopularLocations";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
+import type { AuthSession } from "@/lib/auth";
 import heroBg from "@/assets/hero-bg.jpg";
 
-const Index = () => {
+interface IndexProps {
+  session: AuthSession | null;
+  onAuthenticated: (session: AuthSession) => void;
+  onSignOut: () => void;
+}
+
+const Index = ({ session, onAuthenticated, onSignOut }: IndexProps) => {
   return (
     <>
       <Helmet>
-        <title>CasaFind.ph - Find Your Dream Home in the Philippines</title>
+        <title>CasaFindPH</title>
         <meta
           name="description"
-          content="Discover verified properties for sale and rent across the Philippines. CasaFind.ph connects property seekers with trusted sellers and agents. Find condos, houses, and commercial spaces today."
+          content="Discover verified properties for sale and rent across the Philippines. CasaFindPH connects property seekers with trusted sellers and agents. Find condos, houses, and commercial spaces today."
         />
         <meta name="keywords" content="Philippines real estate, property for sale Philippines, condo Manila, house and lot, rent apartment, OFW property investment" />
         <link rel="canonical" href="https://casafind.ph" />
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        <Header />
+        <Header
+          session={session}
+          onAuthenticated={onAuthenticated}
+          onSignOut={onSignOut}
+        />
 
         {/* Hero Section */}
         <section className="relative min-h-[90vh] flex items-center justify-center pt-20">

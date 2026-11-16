@@ -1,10 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, User, Heart, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { AuthModal } from "@/components/AuthModal";
+import type { AuthSession } from "@/lib/auth";
+import logo from "@/assets/CasaFindPH-Icon.jpeg";
 
-const Header = () => {
+interface HeaderProps {
+  session: AuthSession | null;
+  onAuthenticated: (session: AuthSession) => void;
+  onSignOut: () => void;
+}
+
+const Header = ({ session, onAuthenticated, onSignOut }: HeaderProps) => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
 
   const navLinks = [
     { label: "Buy", href: "/properties?type=buy" },
@@ -14,19 +25,19 @@ const Header = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border/50">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-b border-slate-200 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-hero rounded-xl flex items-center justify-center">
-              <span className="text-xl font-bold text-primary-foreground">C</span>
-            </div>
-            <div className="hidden sm:block">
-              <span className="text-xl font-bold text-foreground">Casa</span>
-              <span className="text-xl font-bold text-primary">Find</span>
-              <span className="text-sm text-muted-foreground">.ph</span>
-            </div>
+          <Link to="/" className="flex items-center gap-3" aria-label="CasaFindPH home">
+            <img
+              src={logo}
+              alt="CasaFindPH logo"
+              className="h-12 w-auto md:h-14"
+            />
+            <span className="text-xl md:text-2xl font-black tracking-tight text-foreground">
+              CasaFind<span className="text-primary">PH</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -44,16 +55,36 @@ const Header = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" aria-label="Saved homes">
               <Heart className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={session ? "Profile" : "Sign in"}
+              onClick={() => {
+                if (!session) {
+                  setAuthOpen(true);
+                }
+              }}
+            >
               <User className="h-5 w-5" />
             </Button>
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              List Property
-            </Button>
+            {session ? (
+              <div className="flex items-center gap-2 rounded-full border border-border bg-background/80 px-3 py-1.5">
+                <span className="text-sm font-medium text-foreground">
+                  {session.user.firstName}
+                </span>
+                <Button variant="outline" size="sm" onClick={onSignOut}>
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <Button className="gap-2" onClick={() => setAuthOpen(true)}>
+                <User className="h-4 w-4" />
+                Sign In
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -84,19 +115,32 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex gap-2 mt-4 px-4">
-                <Button variant="outline" className="flex-1 gap-2">
-                  <User className="h-4 w-4" />
-                  Sign In
-                </Button>
-                <Button className="flex-1 gap-2">
-                  <Plus className="h-4 w-4" />
-                  List Property
-                </Button>
+                {session ? (
+                  <Button variant="outline" className="flex-1 gap-2" onClick={onSignOut}>
+                    <User className="h-4 w-4" />
+                    Sign Out
+                  </Button>
+                ) : (
+                  <Button variant="outline" className="flex-1 gap-2" onClick={() => setAuthOpen(true)}>
+                    <User className="h-4 w-4" />
+                    Sign In
+                  </Button>
+                )}
               </div>
             </nav>
           </div>
         )}
       </div>
+
+      <AuthModal
+        open={authOpen}
+        onOpenChange={setAuthOpen}
+        onAuthenticated={(nextSession) => {
+          onAuthenticated(nextSession);
+          setAuthOpen(false);
+          navigate("/account");
+        }}
+      />
     </header>
   );
 };
