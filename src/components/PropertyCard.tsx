@@ -1,7 +1,29 @@
 import { MapPin, Bed, Bath, Square, Heart, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import property1 from "@/assets/property-1.jpg";
+import property2 from "@/assets/property-2.jpg";
+import property3 from "@/assets/property-3.jpg";
+import property4 from "@/assets/property-4.jpg";
+import property5 from "@/assets/property-5.jpg";
+import property6 from "@/assets/property-6.jpg";
+
+const fallbackImages = [
+  "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1448630360428-65456885c650?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1555617117-08d6f4b4d9f4?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+  "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200&q=80",
+];
 
 export interface Property {
   id: string;
@@ -29,6 +51,26 @@ interface PropertyCardProps {
 
 const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => {
   const [isLiked, setIsLiked] = useState(false);
+  const [imageSrc, setImageSrc] = useState(property.image || fallbackImages[0]);
+  const [fallbackAttempt, setFallbackAttempt] = useState(0);
+
+  useEffect(() => {
+    setImageSrc(property.image || fallbackImages[0]);
+    setFallbackAttempt(0);
+  }, [property.id, property.image]);
+
+  const handleImageError = () => {
+    setFallbackAttempt((previous) => {
+      const nextAttempt = previous + 1;
+      const nextImage =
+        nextAttempt < fallbackImages.length
+          ? fallbackImages[nextAttempt]
+          : fallbackImages[fallbackImages.length - 1];
+
+      setImageSrc(nextImage);
+      return nextAttempt;
+    });
+  };
 
   const formatPrice = (price: number) => {
     if (price >= 1000000) {
@@ -42,8 +84,9 @@ const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => {
       {/* Image Container */}
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
-          src={property.image}
+          src={imageSrc}
           alt={property.title}
+          onError={handleImageError}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
         
