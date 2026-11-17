@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { AuthModal } from "@/components/AuthModal";
 import type { AuthSession } from "@/lib/auth";
-import logo from "@/assets/CasaFindPH-Icon.jpeg";
+import logo from "@/assets/CasaFindPH-Icon.png";
 import fallbackLogo from "@/assets/property-1.jpg";
 
 interface HeaderProps {
