@@ -90,11 +90,14 @@ export async function signIn(email: string, password: string): Promise<AuthSessi
   };
 }
 
+export type SignUpRole = "SEEKER" | "LISTER";
+
 export async function signUp(
   firstName: string,
   lastName: string,
   email: string,
   password: string,
+  role: SignUpRole = "SEEKER",
 ): Promise<AuthSession> {
   const data = await graphqlRequest<{ register: { token: string; user: AuthUser } }>(`
     mutation {
@@ -103,7 +106,7 @@ export async function signUp(
         lastName: ${JSON.stringify(lastName)},
         email: ${JSON.stringify(email)},
         password: ${JSON.stringify(password)},
-        role: ${JSON.stringify("SEEKER")}
+        role: ${JSON.stringify(role)}
       ) {
         token
         user {

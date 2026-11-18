@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { AuthSession } from "@/lib/auth";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import type { AuthSession, SignUpRole } from "@/lib/auth";
 import { signIn, signUp } from "@/lib/auth";
 
 interface AuthModalProps {
@@ -26,6 +27,7 @@ export function AuthModal({ open, onOpenChange, onAuthenticated }: AuthModalProp
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [signupRole, setSignupRole] = useState<SignUpRole>("SEEKER");
   const [submitting, setSubmitting] = useState(false);
 
   function resetForm() {
@@ -33,6 +35,7 @@ export function AuthModal({ open, onOpenChange, onAuthenticated }: AuthModalProp
     setLastName("");
     setEmail("");
     setPassword("");
+    setSignupRole("SEEKER");
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -43,7 +46,16 @@ export function AuthModal({ open, onOpenChange, onAuthenticated }: AuthModalProp
       const session =
         mode === "signin"
           ? await signIn(email.trim(), password)
-          : await signUp(firstName.trim(), lastName.trim(), email.trim(), password);
+          : await signUp(firstName.trim(), lastName.trim(), email.trim(), password, signupRole);
+
+      if (mode === "signup" && signupRole === "LISTER") {
+        onOpenChange(false);
+        resetForm();
+        toast.success(
+          "Account created! Please check your email to verify your account before you can log in and post listings.",
+        );
+        return;
+      }
 
       onAuthenticated(session);
       onOpenChange(false);
@@ -112,6 +124,42 @@ export function AuthModal({ open, onOpenChange, onAuthenticated }: AuthModalProp
                   required={mode === "signup"}
                 />
               </div>
+            </div>
+          )}
+
+          {mode === "signup" && (
+            <div className="space-y-2">
+              <Label>I want to</Label>
+              <RadioGroup
+                value={signupRole}
+                onValueChange={(value) => setSignupRole(value as SignUpRole)}
+                className="gap-3"
+              >
+                <label
+                  htmlFor="role-seeker"
+                  className="flex cursor-pointer items-start gap-3 rounded-lg border border-border p-3 transition hover:bg-muted"
+                >
+                  <RadioGroupItem id="role-seeker" value="SEEKER" className="mt-0.5" />
+                  <span className="space-y-0.5">
+                    <span className="block text-sm font-medium">Seeker</span>
+                    <span className="block text-xs text-muted-foreground">
+                      Browse and save properties
+                    </span>
+                  </span>
+                </label>
+                <label
+                  htmlFor="role-lister"
+                  className="flex cursor-pointer items-start gap-3 rounded-lg border border-border p-3 transition hover:bg-muted"
+                >
+                  <RadioGroupItem id="role-lister" value="LISTER" className="mt-0.5" />
+                  <span className="space-y-0.5">
+                    <span className="block text-sm font-medium">Lister</span>
+                    <span className="block text-xs text-muted-foreground">
+                      List your properties (agent / owner). Requires email verification.
+                    </span>
+                  </span>
+                </label>
+              </RadioGroup>
             </div>
           )}
 
