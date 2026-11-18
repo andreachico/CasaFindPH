@@ -1,11 +1,42 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, User, Heart, Plus } from "lucide-react";
+import { Menu, X, User, Heart, LogOut, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { AuthModal } from "@/components/AuthModal";
 import type { AuthSession } from "@/lib/auth";
 import logo from "@/assets/CasaFindPH-Icon.png";
 import fallbackLogo from "@/assets/property-1.jpg";
+
+const getInitials = (user: AuthSession["user"]) => {
+  const first = user.firstName?.[0] ?? "";
+  const last = user.lastName?.[0] ?? "";
+  return (first + last).toUpperCase() || "U";
+};
+
+const getRoleLabel = (role: string) => {
+  switch (role?.toUpperCase()) {
+    case "ADMIN":
+      return "Admin";
+    case "LISTER":
+    case "AGENT":
+    case "OWNER":
+      return "Lister";
+    case "SEEKER":
+      return "Seeker";
+    default:
+      return "";
+  }
+};
 
 interface HeaderProps {
   session: AuthSession | null;
@@ -57,31 +88,59 @@ const Header = ({ session, onAuthenticated, onSignOut }: HeaderProps) => {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" size="icon" aria-label="Saved homes">
+          <div className="hidden md:flex items-center gap-2">
+            <Button variant="ghost" size="icon" aria-label="Saved homes" className="rounded-full">
               <Heart className="h-5 w-5" />
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label={session ? "Profile" : "Sign in"}
-              onClick={() => {
-                if (!session) {
-                  setAuthOpen(true);
-                }
-              }}
-            >
-              <User className="h-5 w-5" />
-            </Button>
             {session ? (
-              <div className="flex items-center gap-2 rounded-full border border-border bg-background/80 px-3 py-1.5">
-                <span className="text-sm font-medium text-foreground">
-                  {session.user.firstName}
-                </span>
-                <Button variant="outline" size="sm" onClick={onSignOut}>
-                  Sign Out
-                </Button>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className="flex items-center gap-2 rounded-full border border-slate-200 bg-white py-1 pl-1 pr-3 transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                    aria-label="Account menu"
+                  >
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
+                        {getInitials(session.user)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-semibold text-foreground">
+                      {session.user.firstName}
+                    </span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-60">
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-sm font-semibold text-foreground">
+                        {session.user.firstName} {session.user.lastName}
+                      </p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {session.user.email}
+                      </p>
+                      {getRoleLabel(session.user.role) && (
+                        <Badge variant="secondary" className="mt-1 w-fit text-[10px]">
+                          {getRoleLabel(session.user.role)}
+                        </Badge>
+                      )}
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/account")} className="gap-2">
+                    <UserCircle className="h-4 w-4" /> My account
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="gap-2">
+                    <Heart className="h-4 w-4" /> Saved homes
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={onSignOut}
+                    className="gap-2 text-destructive focus:text-destructive"
+                  >
+                    <LogOut className="h-4 w-4" /> Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Button className="gap-2" onClick={() => setAuthOpen(true)}>
                 <User className="h-4 w-4" />
@@ -117,19 +176,47 @@ const Header = ({ session, onAuthenticated, onSignOut }: HeaderProps) => {
                   {link.label}
                 </Link>
               ))}
-              <div className="flex gap-2 mt-4 px-4">
-                {session ? (
-                  <Button variant="outline" className="flex-1 gap-2" onClick={onSignOut}>
-                    <User className="h-4 w-4" />
-                    Sign Out
+              {session ? (
+                <div className="mt-4 flex flex-col gap-2 px-4">
+                  <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                    <Avatar className="h-9 w-9">
+                      <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
+                        {getInitials(session.user)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex min-w-0 flex-col">
+                      <span className="truncate text-sm font-semibold text-foreground">
+                        {session.user.firstName} {session.user.lastName}
+                      </span>
+                      <span className="truncate text-xs text-muted-foreground">
+                        {session.user.email}
+                      </span>
+                    </div>
+                  </div>
+                  <Link
+                    to="/account"
+                    className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <UserCircle className="h-4 w-4" /> My account
+                  </Link>
+                  <Button
+                    variant="outline"
+                    className="flex-1 gap-2 text-destructive hover:text-destructive"
+                    onClick={onSignOut}
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign out
                   </Button>
-                ) : (
+                </div>
+              ) : (
+                <div className="flex gap-2 mt-4 px-4">
                   <Button variant="outline" className="flex-1 gap-2" onClick={() => setAuthOpen(true)}>
                     <User className="h-4 w-4" />
                     Sign In
                   </Button>
-                )}
-              </div>
+                </div>
+              )}
             </nav>
           </div>
         )}
