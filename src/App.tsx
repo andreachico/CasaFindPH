@@ -54,7 +54,11 @@ const App = () => {
                 path="/account"
                 element={
                   <ProtectedRoute session={session}>
-                    <AccountPage session={session} onSignOut={() => setSession(null)} />
+                    <AccountPage
+                      session={session}
+                      onAuthenticated={setSession}
+                      onSignOut={() => setSession(null)}
+                    />
                   </ProtectedRoute>
                 }
               />
