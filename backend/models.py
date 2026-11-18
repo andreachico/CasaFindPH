@@ -49,5 +49,8 @@ class Property(Base):
     lot_size = Column(Numeric(10, 2), nullable=True)
     image_url = Column(String(500), nullable=True)
     detail_image_url = Column(String(500), nullable=True)
+    address = Column(Text, nullable=True)
+    year_built = Column(Integer, nullable=True)
+    furnishing = Column(String(30), nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(DateTime, nullable=False, server_default=func.now())
