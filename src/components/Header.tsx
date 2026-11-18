@@ -69,8 +69,8 @@ const Header = ({ session, onAuthenticated, onSignOut }: HeaderProps) => {
               onError={() => setLogoSrc(fallbackLogo)}
               className="h-12 w-auto md:h-14"
             />
-            <span className="text-xl md:text-2xl font-black tracking-tight text-foreground">
-              CasaFind<span className="text-primary">PH</span>
+            <span className="text-xl md:text-2xl font-black tracking-tight bg-gradient-to-r from-[#0F766E] via-[#1CAEA0] to-[#2DD4BF] bg-clip-text text-transparent">
+              CasaFind<span className="font-black">PH</span>
             </span>
           </Link>
 

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from "lucide-react";
+import logo from "@/assets/CasaFindPH-Icon.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -45,9 +46,7 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-                <span className="text-xl font-bold text-primary-foreground">C</span>
-              </div>
+              <img src={logo} alt="CasaFindPH logo" className="h-10 w-auto" />
               <div>
                 <span className="text-xl font-bold text-background">Casa</span>
                 <span className="text-xl font-bold text-primary">Find</span>
