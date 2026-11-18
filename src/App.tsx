@@ -9,6 +9,7 @@ import type { AuthSession } from "@/lib/auth";
 import { persistAuth, readStoredAuth } from "@/lib/auth";
 import Index from "./pages/Index";
 import AccountPage from "./pages/Account";
+import PropertyDetail from "./pages/PropertyDetail";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 
@@ -58,6 +59,7 @@ const App = () => {
                 }
               />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="/property/:id" element={<PropertyDetail />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
