@@ -158,22 +158,24 @@
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+  /* Hide the scrollbar (scrolling still works). With a 0-width scrollbar the
+     viewport width is identical on every page, so the fixed header stays
+     aligned and never shifts when a menu/dialog locks body scroll. */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/old Edge */
 }
 
-/* Custom scrollbar */
+/* When Radix (react-remove-scroll) opens a menu/dialog it hides the body
+   scrollbar and compensates non-fixed content with padding — but the fixed
+   header is not compensated, so it jumps right. Apply the same scrollbar-width
+   padding to the fixed header only while scroll is locked. */
+body[data-scroll-locked] header {
+  padding-right: var(--removed-body-scroll-bar-size, 0px);
+}
+
+/* Hide the scrollbar in WebKit/Blink browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-muted;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-primary/30 rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-primary/50;
+  width: 0;
+  height: 0;
+  display: none;
 }
