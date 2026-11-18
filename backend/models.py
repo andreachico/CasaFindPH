@@ -8,13 +8,17 @@ Base = declarative_base()
 
 class UserRoleEnum(enum.Enum):
     ADMIN = "ADMIN"
+    LISTER = "LISTER"
     AGENT = "AGENT"
     OWNER = "OWNER"
     SEEKER = "SEEKER"
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    # The physical public.users table uses an auto-increment integer primary key
+    # (nextval('users_id_seq')); the frontend/GraphQL layer treats user ids as
+    # integers accordingly.
+    id = Column(Integer, primary_key=True, autoincrement=True)
     first_name = Column(String(100), nullable=True)
     last_name = Column(String(100), nullable=True)
     birthday = Column(Date, nullable=True)
@@ -24,6 +28,7 @@ class User(Base):
     password_hash = Column(String(255), nullable=False)
     role = Column(String(30), nullable=False, default="SEEKER")
     verified = Column(Boolean, nullable=False, default=False)
+    verification_token = Column(String(64), nullable=True)
 
 # `listing_type` is stored as a plain varchar in the existing casafind_db
 # `properties` table (values: 'sale' / 'rent').
