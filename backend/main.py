@@ -85,6 +85,22 @@ def ensure_property_detail_image_url_column():
         if not exists:
             conn.execute(text("ALTER TABLE properties ADD COLUMN detail_image_url VARCHAR(500)"))
 
+
+def ensure_property_slice_columns():
+    new_columns = {
+        "address": "TEXT",
+        "year_built": "INTEGER",
+        "furnishing": "VARCHAR(30)",
+    }
+    with engine.begin() as conn:
+        for column_name, definition in new_columns.items():
+            exists = conn.execute(
+                text("SELECT 1 FROM information_schema.columns WHERE table_name = 'properties' AND column_name = :column_name"),
+                {"column_name": column_name},
+            ).fetchone()
+            if not exists:
+                conn.execute(text(f"ALTER TABLE properties ADD COLUMN {column_name} {definition}"))
+
 # Create tables on startup
 @app.on_event("startup")
 def on_startup():
@@ -93,6 +109,7 @@ def on_startup():
     ensure_user_auth_columns()
     ensure_property_image_url_column()
     ensure_property_detail_image_url_column()
+    ensure_property_slice_columns()
 
 # Upload endpoint
 @app.post("/upload")

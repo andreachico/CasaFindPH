@@ -93,6 +93,9 @@ class PropertyType:
     lot_size: Optional[float]
     image_url: Optional[str] = None
     detail_image_url: Optional[str] = None
+    address: Optional[str] = None
+    year_built: Optional[int] = None
+    furnishing: Optional[str] = None
 
 
 def _to_property_type(p: Property) -> "PropertyType":
@@ -109,6 +112,9 @@ def _to_property_type(p: Property) -> "PropertyType":
         lot_size=float(p.lot_size) if p.lot_size is not None else None,
         image_url=p.image_url,
         detail_image_url=getattr(p, "detail_image_url", None),
+        address=getattr(p, "address", None),
+        year_built=getattr(p, "year_built", None),
+        furnishing=getattr(p, "furnishing", None),
     )
 
 # -----------------------------
@@ -327,6 +333,9 @@ class Mutation:
         lot_size: Optional[float] = None,
         image_url: Optional[str] = None,
         detail_image_url: Optional[str] = None,
+        address: Optional[str] = None,
+        year_built: Optional[int] = None,
+        furnishing: Optional[str] = None,
     ) -> PropertyType:
         if listing_type not in ("sale", "rent"):
             raise Exception("listing_type must be 'sale' or 'rent'.")
@@ -345,6 +354,9 @@ class Mutation:
                 lot_size=lot_size,
                 image_url=image_url,
                 detail_image_url=detail_image_url,
+                address=address,
+                year_built=year_built,
+                furnishing=furnishing,
             )
             db.add(prop)
             db.commit()
@@ -368,6 +380,9 @@ class Mutation:
         lot_size: Optional[float] = None,
         image_url: Optional[str] = None,
         detail_image_url: Optional[str] = None,
+        address: Optional[str] = None,
+        year_built: Optional[int] = None,
+        furnishing: Optional[str] = None,
     ) -> PropertyType:
         if listing_type is not None and listing_type not in ("sale", "rent"):
             raise Exception("listing_type must be 'sale' or 'rent'.")
@@ -399,6 +414,12 @@ class Mutation:
                 prop.image_url = image_url or None
             if detail_image_url is not None:
                 prop.detail_image_url = detail_image_url or None
+            if address is not None:
+                prop.address = address
+            if year_built is not None:
+                prop.year_built = year_built
+            if furnishing is not None:
+                prop.furnishing = furnishing
             db.commit()
             db.refresh(prop)
             return _to_property_type(prop)
