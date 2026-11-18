@@ -80,7 +80,7 @@ const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => {
   };
 
   return (
-    <div className="group bg-card rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-500 hover:-translate-y-2">
+    <div className="group bg-card rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-500 hover:-translate-y-2 h-full flex flex-col">
       {/* Image Container */}
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
@@ -134,7 +134,7 @@ const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => {
       </div>
 
       {/* Content */}
-      <div className="p-5">
+      <div className="p-5 flex flex-col flex-1">
         {/* Property Type */}
         <p className="text-xs font-medium text-primary uppercase tracking-wider mb-2">
           {property.propertyType}
@@ -168,7 +168,7 @@ const PropertyCard = ({ property, onViewDetails }: PropertyCardProps) => {
         </div>
 
         {/* Agent & CTA */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-auto">
           <div>
             <p className="text-sm font-medium text-foreground">{property.agent.name}</p>
             <p className="text-xs text-muted-foreground">{property.agent.role}</p>
