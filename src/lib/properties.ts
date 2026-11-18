@@ -14,6 +14,9 @@ export interface CmsProperty {
   image_url: string | null;
   detail_image_url: string | null;
   created_at: string | null;
+  address: string | null;
+  year_built: number | null;
+  furnishing: string | null;
 }
 
 export const fallbackImages: string[] = [
@@ -32,7 +35,7 @@ export const fallbackImages: string[] = [
 ];
 
 export const PROPERTY_SELECT =
-  "id, title, description, listing_type, price, room_count, bathroom_count, parking_count, property_size, lot_size, image_url, detail_image_url, created_at";
+  "id, title, description, listing_type, price, room_count, bathroom_count, parking_count, property_size, lot_size, image_url, detail_image_url, created_at, address, year_built, furnishing";
 
 export const mapCmsProperty = (item: CmsProperty, index: number): Property => {
   const imageUrl =

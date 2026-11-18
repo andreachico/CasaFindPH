@@ -261,14 +261,14 @@ const PropertyDetail = () => {
     {
       icon: Sofa,
       label: "Furnishing",
-      value: "—",
-      comingSoon: true,
+      value: property.furnishing ? property.furnishing : "—",
+      comingSoon: !property.furnishing,
     },
     {
       icon: CalendarDays,
       label: "Year built",
-      value: "—",
-      comingSoon: true,
+      value: property.year_built ? String(property.year_built) : "—",
+      comingSoon: !property.year_built,
     },
   ];
 
@@ -359,7 +359,7 @@ const PropertyDetail = () => {
             </h1>
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <MapPin className="h-4 w-4 flex-shrink-0" />
-              <span className="text-sm">Philippines</span>
+              <span className="text-sm">{property.address || "Philippines"}</span>
             </div>
           </div>
 
