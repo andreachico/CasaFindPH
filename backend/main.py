@@ -3,6 +3,7 @@ import uuid
 from dotenv import load_dotenv
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from strawberry.fastapi import GraphQLRouter
 from sqlalchemy import create_engine, text
@@ -46,6 +47,15 @@ def ensure_user_verified_column():
         ).fetchone()
         if not exists:
             conn.execute(text("ALTER TABLE users ADD COLUMN verified BOOLEAN NOT NULL DEFAULT FALSE"))
+
+
+def ensure_user_verification_token_column():
+    with engine.begin() as conn:
+        exists = conn.execute(
+            text("SELECT 1 FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'verification_token'")
+        ).fetchone()
+        if not exists:
+            conn.execute(text("ALTER TABLE users ADD COLUMN verification_token VARCHAR(64)"))
 
 
 def ensure_user_auth_columns():
@@ -101,15 +111,59 @@ def ensure_property_slice_columns():
             if not exists:
                 conn.execute(text(f"ALTER TABLE properties ADD COLUMN {column_name} {definition}"))
 
+
+def ensure_lister_role_enum_value():
+    # public.users.role is backed by the Postgres enum type `userroleenum`.
+    # Add the new LISTER value if the enum exists and doesn't have it yet.
+    # Runs in AUTOCOMMIT because ALTER TYPE ... ADD VALUE cannot run inside a
+    # transaction block on older PostgreSQL versions.
+    with engine.connect() as conn:
+        conn = conn.execution_options(isolation_level="AUTOCOMMIT")
+        type_exists = conn.execute(
+            text("SELECT 1 FROM pg_type WHERE typname = 'userroleenum'")
+        ).fetchone()
+        if not type_exists:
+            return
+        has_lister = conn.execute(
+            text(
+                "SELECT 1 FROM pg_enum e JOIN pg_type t ON e.enumtypid = t.oid "
+                "WHERE t.typname = 'userroleenum' AND e.enumlabel = 'LISTER'"
+            )
+        ).fetchone()
+        if not has_lister:
+            conn.execute(text("ALTER TYPE userroleenum ADD VALUE 'LISTER'"))
+
 # Create tables on startup
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
     ensure_user_verified_column()
+    ensure_user_verification_token_column()
     ensure_user_auth_columns()
     ensure_property_image_url_column()
     ensure_property_detail_image_url_column()
     ensure_property_slice_columns()
+    ensure_lister_role_enum_value()
+
+# Email verification endpoint
+@app.get("/verify-email")
+def verify_email(token: str):
+    db = SessionLocal()
+    try:
+        user = db.query(User).filter(User.verification_token == token).first()
+        if not user:
+            return HTMLResponse(
+                content="<html><body><h1>Verification failed</h1><p>Invalid or expired verification link.</p></body></html>",
+                status_code=400,
+            )
+        user.verified = True
+        user.verification_token = None
+        db.commit()
+        return HTMLResponse(
+            content="<html><body><h1>Email verified</h1><p>Your CasaFind account has been verified. You can now log in.</p></body></html>"
+        )
+    finally:
+        db.close()
 
 # Upload endpoint
 @app.post("/upload")

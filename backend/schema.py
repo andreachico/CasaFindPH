@@ -7,6 +7,9 @@ from sqlalchemy import create_engine
 import bcrypt as _bcrypt
 import jwt
 import os
+import smtplib
+import secrets
+from email.message import EmailMessage
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,6 +22,39 @@ SUPERADMIN_EMAILS = {
 
 def _is_super_admin_email(email: str) -> bool:
     return email.strip().lower() in SUPERADMIN_EMAILS
+
+
+APP_BASE_URL = os.getenv("APP_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
+
+
+def _generate_verification_token() -> str:
+    return secrets.token_urlsafe(32)[:64]
+
+
+def _send_verification_email(to_email: str, token: str) -> None:
+    link = f"{APP_BASE_URL}/verify-email?token={token}"
+    smtp_host = os.getenv("SMTP_HOST")
+    if not smtp_host:
+        print(f"[verification] SMTP not configured. Verification link for {to_email}: {link}")
+        return
+    try:
+        msg = EmailMessage()
+        msg["Subject"] = "Verify your CasaFind account"
+        msg["From"] = os.getenv("SMTP_FROM", os.getenv("SMTP_USER", "no-reply@casafind.ph"))
+        msg["To"] = to_email
+        msg.set_content(
+            f"Welcome to CasaFind!\n\nPlease verify your account by clicking the link below:\n{link}\n\nIf you did not sign up, you can ignore this email."
+        )
+        port = int(os.getenv("SMTP_PORT", "587"))
+        with smtplib.SMTP(smtp_host, port) as server:
+            server.starttls()
+            smtp_user = os.getenv("SMTP_USER")
+            smtp_password = os.getenv("SMTP_PASSWORD")
+            if smtp_user and smtp_password:
+                server.login(smtp_user, smtp_password)
+            server.send_message(msg)
+    except Exception as exc:  # pragma: no cover - email failures must not break signup
+        print(f"[verification] Failed to send email to {to_email}: {exc}. Link: {link}")
 
 
 # Database
@@ -171,6 +207,21 @@ class Mutation:
 
         role_enum = UserRoleEnum(role.upper())
         is_admin = role_enum == UserRoleEnum.ADMIN
+        is_seeker = role_enum == UserRoleEnum.SEEKER
+        # Any role that is not ADMIN and not SEEKER is a lister-type
+        # (LISTER, plus legacy AGENT/OWNER) and must verify before login.
+        is_lister_type = not is_admin and not is_seeker
+
+        if is_seeker:
+            verified = True
+        elif is_admin:
+            verified = _is_super_admin_email(email)
+        else:
+            verified = False
+
+        verification_token = None
+        if is_lister_type and not verified:
+            verification_token = _generate_verification_token()
 
         # Create user
         user = User(
@@ -180,11 +231,15 @@ class Mutation:
             password_hash=hashed_pw,
             role=role_enum.value,
             contact_number=contactNumber,
-            verified=not is_admin or _is_super_admin_email(email),
+            verified=verified,
+            verification_token=verification_token,
         )
         db.add(user)
         db.commit()
         db.refresh(user)
+
+        if is_lister_type and verification_token:
+            _send_verification_email(user.email, verification_token)
 
         if str(user.role or "").upper() == UserRoleEnum.ADMIN.value and not user.verified and not _is_super_admin_email(user.email):
             db.close()
@@ -208,9 +263,13 @@ class Mutation:
         if not user or not _bcrypt.checkpw(password_bytes, user.password_hash.encode("utf-8")):
             db.close()
             raise Exception("Invalid credentials.")
-        if str(user.role or "").upper() == UserRoleEnum.ADMIN.value and not user.verified and not _is_super_admin_email(user.email):
+        role_upper = str(user.role or "").upper()
+        if role_upper == UserRoleEnum.ADMIN.value and not user.verified and not _is_super_admin_email(user.email):
             db.close()
             raise Exception("This admin account is pending verification.")
+        if role_upper in (UserRoleEnum.LISTER.value, UserRoleEnum.AGENT.value, UserRoleEnum.OWNER.value) and not user.verified:
+            db.close()
+            raise Exception("Please verify your email before logging in.")
 
         token = jwt.encode(
             {"user_id": str(user.id), "role": str(user.role or "SEEKER").upper()},
@@ -239,10 +298,15 @@ class Mutation:
             try:
                 role_enum = UserRoleEnum(role.upper())
             except ValueError:
-                raise Exception("Role must be ADMIN, AGENT, OWNER or SEEKER.")
+                raise Exception("Role must be ADMIN, LISTER or SEEKER.")
             _validate_password(password)
             if verified is None:
-                verified = role_enum != UserRoleEnum.ADMIN or _is_super_admin_email(email)
+                if role_enum == UserRoleEnum.SEEKER:
+                    verified = True
+                elif role_enum == UserRoleEnum.ADMIN:
+                    verified = _is_super_admin_email(email)
+                else:
+                    verified = False
             user = User(
                 first_name=firstName,
                 last_name=lastName,
@@ -288,7 +352,7 @@ class Mutation:
                 try:
                     user.role = UserRoleEnum(role.upper()).value
                 except ValueError:
-                    raise Exception("Role must be ADMIN, AGENT, OWNER or SEEKER.")
+                    raise Exception("Role must be ADMIN, LISTER or SEEKER.")
                 if str(user.role or "").upper() == UserRoleEnum.ADMIN.value and verified is None and not _is_super_admin_email(user.email):
                     user.verified = False
             if contactNumber is not None:
@@ -315,6 +379,37 @@ class Mutation:
                 raise Exception("User not found.")
             db.delete(user)
             db.commit()
+            return True
+        finally:
+            db.close()
+
+    @strawberry.mutation
+    def verify_email(self, token: str) -> bool:
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.verification_token == token).first()
+            if not user:
+                raise Exception("Invalid or expired verification token.")
+            user.verified = True
+            user.verification_token = None
+            db.commit()
+            return True
+        finally:
+            db.close()
+
+    @strawberry.mutation
+    def resend_verification(self, email: str) -> bool:
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.email == email).first()
+            if not user:
+                raise Exception("No account found for that email.")
+            if user.verified:
+                raise Exception("This account is already verified.")
+            token = _generate_verification_token()
+            user.verification_token = token
+            db.commit()
+            _send_verification_email(user.email, token)
             return True
         finally:
             db.close()
